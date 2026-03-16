@@ -12,13 +12,17 @@ retry_config = types.HttpRetryOptions(
     http_status_codes=[429, 500, 503, 504], # Retry on these HTTP errors
 )
 
-def extract_text_from_events(events, agent_name: str = None) -> str:
+def extract_text_from_events(events, target_agents: list = None):
     """
     Safely extract model-generated text from ADK event stream.
     Handles None content and unexpected event shapes.
-    Optionally filters by agent_name (author).
+    If target_agents is a list, returns a dictionary mapping agent names to their output text.
+    Otherwise, returns a single string of concatenated text.
     """
-    chunks = []
+    if target_agents and isinstance(target_agents, list):
+        results = {agent: [] for agent in target_agents}
+    else:
+        results = {"_default": []}
 
     for event in events:
         # Skip user echoes
@@ -26,9 +30,16 @@ def extract_text_from_events(events, agent_name: str = None) -> str:
         if role == "user":
             continue
 
-        # If a target agent is specified, skip events from other agents
-        if agent_name and role != agent_name:
-            continue
+        # If standard agents mapping is used
+        if target_agents and isinstance(target_agents, list):
+            if role not in target_agents:
+                continue
+            target_key = role
+        else:
+            # If target_agents is a single string (legacy support)
+            if target_agents and isinstance(target_agents, str) and role != target_agents:
+                continue
+            target_key = "_default"
 
         content = getattr(event, "content", None)
         if not content:
@@ -41,15 +52,19 @@ def extract_text_from_events(events, agent_name: str = None) -> str:
         for part in parts:
             text = getattr(part, "text", None)
             if text:
-                chunks.append(text)
+                results[target_key].append(text)
 
-    return "".join(chunks).strip()
+    # Return dict if array was passed, string otherwise
+    if target_agents and isinstance(target_agents, list):
+        return {k: "".join(v).strip() for k, v in results.items()}
+    return "".join(results["_default"]).strip()
 
 async def run_agent(
     agent,
     prompt: str,
     timeout: int = 60,
-    target_agent: str = None,
+    target_agent=None, # kept for legacy compat
+    target_agents: list = None,
 ):
     """
     Generic agent runner without JSON validation.
@@ -63,7 +78,9 @@ async def run_agent(
             timeout=timeout,
         )
         
-        output_text = extract_text_from_events(events, agent_name=target_agent)
+        # Prefer the new target_agents list parameter
+        targets = target_agents if target_agents is not None else target_agent
+        output_text = extract_text_from_events(events, target_agents=targets)
         logger.info("✅ Agent completed successfully")
         return output_text
         

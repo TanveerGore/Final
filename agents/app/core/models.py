@@ -26,9 +26,11 @@ class ProjectNameResponse(BaseModel):
 
 class BasicModulesResponse(BaseModel):
     modules: str
+    quizzes: str
 
 class AdaptiveModulesResponse(BaseModel):
     modules: str
+    quizzes: str
 
 class CompileRequest(BaseModel):
     fqbn: str

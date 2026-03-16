@@ -13,6 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from .curriculum import curriculum_agent
 from .search import search_agent
 from .modules import individual_module_designer
+from .quiz import quiz_agent
 from app.core.utils import run_agent
 
 logger = logging.getLogger("ModulePipeline")
@@ -21,7 +22,7 @@ load_dotenv()
 
 root_agent = SequentialAgent(
     name="module_designer",
-    sub_agents=[curriculum_agent, search_agent, individual_module_designer]
+    sub_agents=[curriculum_agent, search_agent, individual_module_designer, quiz_agent]
 )
 
 # -------------------------
@@ -37,7 +38,7 @@ async def run_initial_modules_agent():
         result = await run_agent(
             agent=root_agent,
             prompt=DEFAULT_PROMPT,
-            target_agent="initial_modules_agent",
+            target_agent="quiz_agent",
         )
 
         # Print raw model output

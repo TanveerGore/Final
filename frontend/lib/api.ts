@@ -1,6 +1,6 @@
 // ai-learning-platform/lib/api.ts
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/agents';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/agents';
 
 export async function fetchProjectName(description: string) {
   // Use Next.js API route for project name identification

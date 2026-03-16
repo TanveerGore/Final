@@ -121,9 +121,15 @@ async def run_basic_modules(request: ProjectRequest):
     
     print(f"📚 Running Basic Modules Agent for: {topic if topic else 'General'}")
     try:
-        response = await run_agent(basic_runner, prompt, timeout=300, target_agent="initial_modules_agent")
-        clean_response = await structure_beginner_output(str(response))
-        return BasicModulesResponse(modules=clean_response)
+        responses = await run_agent(
+            basic_runner, 
+            prompt, 
+            timeout=300, 
+            target_agents=["initial_modules_agent", "quiz_agent"]
+        )
+        clean_modules = await structure_beginner_output(responses.get("initial_modules_agent", ""))
+        clean_quizzes = await structure_beginner_output(responses.get("quiz_agent", ""))
+        return BasicModulesResponse(modules=clean_modules, quizzes=clean_quizzes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -134,9 +140,15 @@ async def run_adaptive_modules(request: ProjectRequest):
     try:
         # Prompt construction similar to the example in adaptive_agent.py
         prompt = f"How to make {topic}"
-        response = await run_agent(adaptive_runner, prompt, timeout=300, target_agent="adaptive_modules_agent")
-        clean_response = await structure_beginner_output(str(response))
-        return AdaptiveModulesResponse(modules=clean_response)
+        responses = await run_agent(
+            adaptive_runner, 
+            prompt, 
+            timeout=300, 
+            target_agents=["adaptive_modules_agent", "quiz_agent"]
+        )
+        clean_modules = await structure_beginner_output(responses.get("adaptive_modules_agent", ""))
+        clean_quizzes = await structure_beginner_output(responses.get("quiz_agent", ""))
+        return AdaptiveModulesResponse(modules=clean_modules, quizzes=clean_quizzes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
