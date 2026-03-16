@@ -2,11 +2,9 @@ agents/venv
 agents/sketches
 agents/.env
 agents/ngrok.tgz
-agents/__pycache__
+**/__pycache__/
+*.pyc
 agents/scripts
-agents/app/__pycache__
-agents/app/Beginner/__pycache__
-agents/app/Expert/__pycache__
 env/
 
 backend/node_modules

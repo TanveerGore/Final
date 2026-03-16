@@ -1,7 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 
@@ -11,23 +11,23 @@ app.use(cors());
 
 // DB Connection
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log('MongoDB Connected...');
-    } catch (err) {
-        console.error(err.message);
-        // Exit process with failure
-        process.exit(1);
-    }
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected...");
+  } catch (err) {
+    console.error(err.message);
+    // Exit process with failure
+    process.exit(1);
+  }
 };
 connectDB();
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/agents', require('./routes/agents'));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/agents", require("./routes/agents"));
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5001;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(5001, () => console.log(`Server started on port ${PORT}`));
 
 // Force nodemon restart to load .env

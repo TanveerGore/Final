@@ -12,6 +12,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # Local imports from sibling files
 from .curriculum import curriculum_agent
 from .search import search_agent
+from .link_validator import url_validator_agent, link_replacer_agent
 from .modules import individual_module_designer
 from .quiz import quiz_agent
 from app.core.utils import run_agent
@@ -22,7 +23,7 @@ load_dotenv()
 
 root_agent = SequentialAgent(
     name="module_designer",
-    sub_agents=[curriculum_agent, search_agent, individual_module_designer, quiz_agent]
+    sub_agents=[curriculum_agent, search_agent, url_validator_agent, link_replacer_agent, individual_module_designer, quiz_agent]
 )
 
 # -------------------------

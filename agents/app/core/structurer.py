@@ -1,13 +1,14 @@
 
 import json
 import logging
+from app.core.sanitizer import sanitize_output
 
 logger = logging.getLogger("OutputStructurer")
 
 async def structure_beginner_output(output_text: str) -> str:
     """
     Cleans and structures the raw output from the beginner agents.
-    Removes markdown code blocks and excess whitespace.
+    Removes markdown code blocks, excess whitespace, and AI filler.
     """
     if not output_text:
         return ""
@@ -25,5 +26,8 @@ async def structure_beginner_output(output_text: str) -> str:
         # Remove trailing ```
         if cleaned.endswith("```"):
             cleaned = cleaned[:-3]
-            
+
+    # Apply sanitizer to remove AI filler
+    cleaned = sanitize_output(cleaned)
+
     return cleaned.strip()

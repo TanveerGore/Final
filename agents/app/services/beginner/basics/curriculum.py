@@ -4,62 +4,35 @@ from app.core.utils import retry_config
 
 curriculum_agent = LlmAgent(
     model = Gemini(
-        model="gemini-2.5-flash-lite",
+        model="gemini-3.1-flash-lite-preview",
         retry_config=retry_config,
     ),
     name = "curriculum_designer",
-    description = "Generates a comprehensive plan for how the modules will be and what topics will the modules be about.",
-    instruction = f"""You are responsible for designing a concise learning roadmap for students in electronics and embedded systems.
+    description = "Generates a structured learning roadmap for electronics and embedded systems fundamentals.",
+    instruction = """You are designing a structured learning curriculum for engineering students studying electronics and embedded systems.
 
-Your job is to decide:
-- What modules should exist
-- What each module should focus on
-- What topics and skills are covered
-- What learning goals the student should achieve
-- What external resources are useful
+Produce a curriculum outline (not content) that defines what to teach, in what sequence, and how to assess comprehension.
 
-You must NOT generate detailed lesson content, explanations, or tutorials. Only define the structure and scope of the curriculum.
+CURRICULUM REQUIREMENTS:
+- Target audience: beginner to early-intermediate engineering students
+- Skip elementary material (Ohm's law definitions, "what is a resistor")
+- Focus on analog/digital electronics fundamentals with embedded systems application
+- Practical orientation — every module should connect to measurable lab outcomes
+- 4 to 5 modules in logical progression
 
-The curriculum should:
-- Target beginner to early-intermediate engineering students.
-- Avoid ultra-basic topics (e.g., “what is electricity”).
-- Dont go deep in the concepts of embedded but more towards digital and analog electronics.
-- Embedded related topics should only include very basic theoretical stuff.
-- Balance electronics fundamentals with embedded system concepts.
-- Be practical and project-oriented.
+EACH MODULE MUST INCLUDE:
+- Title: descriptive and specific (avoid generic labels like "Introduction to Sensors")
+- Subtitle: secondary concepts or techniques covered
+- Learning goals: measurable competencies (e.g., "Calculate current-limiting resistor values for LED circuits with ≤5% error")
+- Key topics: specific technical subjects with component or protocol references
+- Learning approach: measurement, experimentation, circuit construction, debugging exercises
+- Assessment approach: practical verification methods (not multiple-choice recall)
 
-The roadmap must contain:
-- Minimum 4 modules, maximum 5 modules.
-- Each module should clearly state:
-  - Learning goals (what the student should be able to do)
-  - Key topics covered
-  - Learning approach (hands-on, experimentation, debugging, etc.)
-  - Assessment approach (how understanding can be checked)
-  - Recommended resources (links or references)
-
-Example topic areas (not mandatory):
-- Analog and digital electronics
-- Microcontroller fundamentals
-- Embedded software basics
-- Interfacing sensors and actuators
-- Power and signal integrity
-
-Focus on clarity, usefulness, and logical progression.
-Keep the output simple, structured, and free of unnecessary wording.
-
-The output should be in JSON format such a way that it will be helpful to be displayed on the frontend side using React.
-
-using the output of search_tool include the urls given by that tool and include them in the output
-
-Your output will include all of these things:
-- Module titles
-- Learning goals
-- Key topics
-- Learning approach
-- Assessment approach
-
-Dont have any urls or anything that is a link just the important curriculum thats all
-
-    """,
+OUTPUT FORMAT:
+- Valid JSON only — no markdown, no commentary, no code blocks
+- Frontend-friendly structure for React rendering
+- No URLs, citations, or links
+- No motivational language or rhetorical questions
+""",
     output_key = "curriculum_designer",
 )

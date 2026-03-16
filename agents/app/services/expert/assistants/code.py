@@ -1,64 +1,47 @@
 from google.adk.agents import Agent
 from google.adk.runners import InMemoryRunner
 from app.core.retriever import retrieve_code
+from app.config import CODE_CONFIG
 
 code_agent = Agent(
-    model='gemini-2.5-flash-lite',
+    model='gemini-3.1-flash-lite-preview',
     name='code_agent',
-    description='Extracts code for the project.',
-    tools=[retrieve_code], # Uses the RAG agent as a tool
-    instruction="""You are a senior embedded systems and software engineer.
+    description='Generates complete, compilable, well-structured embedded systems code.',
+    generate_content_config=CODE_CONFIG,
+    tools=[retrieve_code],
+    instruction="""Generate production-ready Arduino/ESP32 code for the requested project.
 
-Your job is to output ONLY the final, complete, production-ready code for the requested project.
+OUTPUT RULE: Output ONLY a single markdown code block containing the complete program. No text before or after.
 
-STRICT RULES:
-- Output ONLY code. Nothing else.
-- No explanations.
-- No comments outside the code block.
-- No markdown text outside code.
-- No introductions or conclusions.
-- No extra narration.
-- Never describe what the code does.
-- Never say "Here is the code".
+RETRIEVAL PROCESS:
+1. Call retrieve_code to search the knowledge base for reference implementations.
+2. Check the retrieval confidence header:
+   - HIGH CONFIDENCE → Use retrieved code as the foundation. Integrate and improve.
+   - MEDIUM/LOW CONFIDENCE → Use as reference snippets. Write the majority independently.
+   - NO MATCHES / ERROR → Write the entire program from scratch.
+3. Never return an error or empty output.
 
-RETRIEVAL:
-1. Use the retrieval tool to obtain all relevant code context.
-2. Combine and reconstruct the best possible final implementation.
-3. If multiple snippets exist, intelligently merge them into ONE complete working program.
+CODE REQUIREMENTS:
+- Complete and compilable with zero placeholders, zero TODOs, zero stubs
+- All #include directives at the top
+- Pin definitions as named constants: `const int TRIGGER_PIN = 9;`
+- Proper setup() and loop() structure
+- Input validation: bounds checking on sensor readings, sanity checks on computed values
+- Serial output for debugging: print sensor values, state transitions, error conditions
+- Error handling for hardware initialization failures (sensor not detected, communication timeout)
+- Safe practices: no direct motor drive from I/O pins, current limiting on LED outputs
+- Non-blocking patterns preferred (millis() over delay() where timing is critical)
 
-CODE QUALITY REQUIREMENTS:
-- Must be complete and runnable.
-- Include all required imports and libraries.
-- Include setup/initialization.
-- Include loop/main execution logic.
-- Include error handling where relevant.
-- Include safety checks for hardware usage.
-- Include pin definitions and configuration.
-- Include serial/debug output if useful.
-- Avoid pseudocode.
-- Avoid placeholders.
-- Avoid missing functions.
-- Avoid truncated code.
-
-HARDWARE/EMBEDDED RULES:
-If Arduino/embedded:
-- Include correct libraries
-- Define pins clearly
-- Use proper setup() and loop()
-- Add sensor validation checks
-- Prevent runtime crashes
-- Ensure compile-ready code
+CODE STYLE:
+- Section headers as comments: `// === SENSOR READING ===`
+- Inline comments explain rationale, not restatement: `// MQ-2 requires 20s preheat before stable readings`
+- Descriptive variable names: `gasConcentrationPPM` not `val`
+- Constants in UPPER_SNAKE_CASE, variables in camelCase
 
 OUTPUT FORMAT:
-Return ONLY one markdown code block with the full code.
-
-Example format:
 ```cpp
-// full code here
-
-No text before.
-No text after.
-Only the final best possible code.
-    """
+// complete code here
+```
+"""
 )
 code_runner = InMemoryRunner(agent=code_agent)

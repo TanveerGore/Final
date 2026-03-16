@@ -11,6 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from .curriculum import curriculum_agent
 from .search import search_agent
+from .link_validator import url_validator_agent, link_replacer_agent
 from .modules import adaptive_modules_agent
 from .quiz import quiz_agent
 
@@ -20,7 +21,7 @@ load_dotenv()
 
 root_agent = SequentialAgent(
     name="project_based_modules",
-    sub_agents=[curriculum_agent, search_agent, adaptive_modules_agent, quiz_agent]
+    sub_agents=[curriculum_agent, search_agent, url_validator_agent, link_replacer_agent, adaptive_modules_agent, quiz_agent]
 )
 
 
