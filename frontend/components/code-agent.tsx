@@ -12,8 +12,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { fetchProjectCode } from "@/lib/api";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface CodeAgentProps {
   projectName: string;
@@ -71,9 +71,28 @@ export function CodeAgent({
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="text-muted-foreground">Generating Code...</span>
+      <div className="h-full flex flex-col items-center justify-center gap-6 p-8">
+        <div className="relative">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 flex items-center justify-center">
+            <Code2 className="h-8 w-8 text-emerald-400" />
+          </div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 animate-ping opacity-30" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-semibold">Generating code...</p>
+          <p className="text-sm text-muted-foreground">
+            AI is writing Arduino/ESP code for your project
+          </p>
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-2 w-2 rounded-full bg-emerald-400 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
       </div>
     );
   }
@@ -99,19 +118,23 @@ export function CodeAgent({
 
       {/* Code Display */}
       <div className="flex-1 overflow-hidden flex flex-col">
-
-
         <div className="flex-1 overflow-auto p-6">
           <Card className="h-full bg-muted/50 p-0 overflow-hidden border-0">
-             <SyntaxHighlighter
-                language="cpp"
-                style={vscDarkPlus}
-                customStyle={{ margin: 0, padding: '1.5rem', height: '100%', fontSize: '0.875rem', lineHeight: '1.6' }}
-                showLineNumbers={true}
-                wrapLines={true}
-             >
-                {code}
-             </SyntaxHighlighter>
+            <SyntaxHighlighter
+              language="cpp"
+              style={vscDarkPlus}
+              customStyle={{
+                margin: 0,
+                padding: "1.5rem",
+                height: "100%",
+                fontSize: "0.875rem",
+                lineHeight: "1.6",
+              }}
+              showLineNumbers={true}
+              wrapLines={true}
+            >
+              {code}
+            </SyntaxHighlighter>
           </Card>
         </div>
 

@@ -1,46 +1,67 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Cable, ChevronRight, AlertCircle, Loader2 } from 'lucide-react'
-import { fetchProjectDetails } from '@/lib/api'
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Cable, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
+import { fetchProjectDetails } from "@/lib/api";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 
 interface WiringAgentProps {
-  projectName: string
-  onComplete?: () => void
+  projectName: string;
+  onComplete?: () => void;
 }
 
 export function WiringAgent({ projectName, onComplete }: WiringAgentProps) {
-  const [wiringInfo, setWiringInfo] = useState<string>('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
+  const [wiringInfo, setWiringInfo] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const loadWiringInfo = async () => {
       try {
-        setLoading(true)
-        const data = await fetchProjectDetails(projectName)
-        setWiringInfo(data.wiring_agent_output || 'Wiring information not available')
+        setLoading(true);
+        const data = await fetchProjectDetails(projectName);
+        setWiringInfo(
+          data.wiring_agent_output || "Wiring information not available",
+        );
       } catch (err) {
-        console.error('Failed to load wiring info:', err)
-        setError('Failed to load wiring information')
-        setWiringInfo('Wiring information not available at this time')
+        console.error("Failed to load wiring info:", err);
+        setError("Failed to load wiring information");
+        setWiringInfo("Wiring information not available at this time");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadWiringInfo()
-  }, [projectName])
+    };
+    loadWiringInfo();
+  }, [projectName]);
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="text-muted-foreground">Loading wiring guide...</span>
+      <div className="h-full flex flex-col items-center justify-center gap-6 p-8">
+        <div className="relative">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+            <Cable className="h-8 w-8 text-cyan-400" />
+          </div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 animate-ping opacity-30" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-semibold">Generating wiring guide...</p>
+          <p className="text-sm text-muted-foreground">
+            Creating connection diagrams for your components
+          </p>
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-2 w-2 rounded-full bg-cyan-400 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
       </div>
-    )
+    );
   }
   return (
     <div className="h-full flex flex-col">
@@ -51,8 +72,12 @@ export function WiringAgent({ projectName, onComplete }: WiringAgentProps) {
             <Cable className="h-6 w-6 text-accent" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-foreground mb-1">Wiring Guide</h2>
-            <p className="text-muted-foreground">Learn how to connect all the components</p>
+            <h2 className="text-2xl font-bold text-foreground mb-1">
+              Wiring Guide
+            </h2>
+            <p className="text-muted-foreground">
+              Learn how to connect all the components
+            </p>
           </div>
         </div>
       </div>
@@ -66,8 +91,10 @@ export function WiringAgent({ projectName, onComplete }: WiringAgentProps) {
         )}
 
         <Card className="p-6 bg-card border-border">
-          <h3 className="font-semibold text-foreground mb-3">Wiring Instructions</h3>
-            {wiringInfo && <MarkdownRenderer content={wiringInfo} />}
+          <h3 className="font-semibold text-foreground mb-3">
+            Wiring Instructions
+          </h3>
+          {wiringInfo && <MarkdownRenderer content={wiringInfo} />}
         </Card>
       </div>
 
@@ -89,5 +116,5 @@ export function WiringAgent({ projectName, onComplete }: WiringAgentProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

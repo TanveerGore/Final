@@ -1,29 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const CachedResponseSchema = new mongoose.Schema({
   requestHash: {
     type: String,
     required: true,
     unique: true,
-    index: true
   },
   endpoint: {
     type: String,
-    required: true
+    required: true,
+    index: true,
   },
   requestPayload: {
-    type: Object, // Store the original request body for debugging/verification
-    required: true
+    type: Object,
+    required: true,
   },
   responseData: {
-    type: Object, // The cached JSON response
-    required: true
+    type: Object,
+    required: true,
+  },
+  hitCount: {
+    type: Number,
+    default: 1,
+  },
+  lastAccessedAt: {
+    type: Date,
+    default: Date.now,
   },
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 86400 // Optional: expire after 24 hours (can be adjusted)
-  }
+    expires: 172800, // 48 hours TTL
+  },
 });
 
-module.exports = mongoose.model('CachedResponse', CachedResponseSchema);
+module.exports = mongoose.model("CachedResponse", CachedResponseSchema);

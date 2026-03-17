@@ -1,46 +1,70 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Lightbulb, Target, Layers, ChevronRight, Loader2 } from 'lucide-react'
-import { fetchProjectDetails } from '@/lib/api'
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Lightbulb, Target, Layers, ChevronRight, Loader2 } from "lucide-react";
+import { fetchProjectDetails } from "@/lib/api";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 
 interface ProjectOverviewProps {
-  projectName: string
-  onComplete?: () => void
+  projectName: string;
+  onComplete?: () => void;
 }
 
-export function ProjectOverview({ projectName, onComplete }: ProjectOverviewProps) {
-  const [description, setDescription] = useState<string>('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
+export function ProjectOverview({
+  projectName,
+  onComplete,
+}: ProjectOverviewProps) {
+  const [description, setDescription] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const loadDescription = async () => {
       try {
-        setLoading(true)
-        const data = await fetchProjectDetails(projectName)
-        setDescription(data.description_agent_output || 'Project details not available')
+        setLoading(true);
+        const data = await fetchProjectDetails(projectName);
+        setDescription(
+          data.description_agent_output || "Project details not available",
+        );
       } catch (err) {
-        console.error('Failed to load project details:', err)
-        setError('Failed to load project details')
-        setDescription('Project details not available at this time')
+        console.error("Failed to load project details:", err);
+        setError("Failed to load project details");
+        setDescription("Project details not available at this time");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadDescription()
-  }, [projectName])
+    };
+    loadDescription();
+  }, [projectName]);
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="text-muted-foreground">Loading project overview...</span>
+      <div className="h-full flex flex-col items-center justify-center gap-6 p-8">
+        <div className="relative">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+            <Lightbulb className="h-8 w-8 text-amber-400" />
+          </div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 animate-ping opacity-30" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-semibold">Analyzing your project...</p>
+          <p className="text-sm text-muted-foreground">
+            Generating a detailed overview for {projectName}
+          </p>
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-2 w-2 rounded-full bg-amber-400 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -52,8 +76,12 @@ export function ProjectOverview({ projectName, onComplete }: ProjectOverviewProp
             <Lightbulb className="h-6 w-6 text-accent" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-foreground mb-1">Project Overview</h2>
-            <p className="text-muted-foreground">Understand your {projectName} project</p>
+            <h2 className="text-2xl font-bold text-foreground mb-1">
+              Project Overview
+            </h2>
+            <p className="text-muted-foreground">
+              Understand your {projectName} project
+            </p>
           </div>
         </div>
       </div>
@@ -70,14 +98,14 @@ export function ProjectOverview({ projectName, onComplete }: ProjectOverviewProp
         <Card className="p-6">
           <div className="flex gap-3 mb-4">
             <Lightbulb className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-            <h3 className="text-lg font-semibold text-foreground">Project Description</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Project Description
+            </h3>
           </div>
           <div className="prose prose-zinc dark:prose-invert max-w-none">
-             <MarkdownRenderer content={description} />
+            <MarkdownRenderer content={description} />
           </div>
         </Card>
-
-
       </div>
 
       {/* Footer */}
@@ -98,5 +126,5 @@ export function ProjectOverview({ projectName, onComplete }: ProjectOverviewProp
         )}
       </div>
     </div>
-  )
+  );
 }
