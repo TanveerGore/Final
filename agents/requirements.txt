@@ -1,0 +1,11 @@
+google-adk
+google-genai
+openai
+python-dotenv
+faiss-cpu
+langchain-community
+langchain-openai
+uvicorn
+fastapi
+rank_bm25
+
