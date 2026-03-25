@@ -8,7 +8,10 @@ const User = require("../models/User");
 const QuizResult = require("../models/QuizResult");
 const Project = require("../models/Project");
 const Feedback = require("../models/Feedback");
+<<<<<<< HEAD
 const ModuleSession = require("../models/ModuleSession");
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 const Question = require("../models/Question");
 
 router.use(auth, roleAuth("teacher"));
@@ -25,6 +28,7 @@ const paginate = (query) => {
 router.get("/students", async (req, res) => {
   try {
     const { limit, skip, page } = paginate(req.query);
+<<<<<<< HEAD
     
     // Safety: if faculty not in token, fetch it
     if (!req.user.faculty) {
@@ -40,12 +44,20 @@ router.get("/students", async (req, res) => {
 
     const [students, total] = await Promise.all([
       User.find(studentFilter)
+=======
+    const [students, total] = await Promise.all([
+      User.find({ role: "student" })
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
         .select("-password")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
+<<<<<<< HEAD
       User.countDocuments(studentFilter),
+=======
+      User.countDocuments({ role: "student" }),
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     ]);
     res.json({ students, page, limit, total, totalPages: Math.ceil(total / limit) });
   } catch (err) {
@@ -57,6 +69,7 @@ router.get("/students", async (req, res) => {
 router.get("/students/:id/progress", validateObjectId("id"), async (req, res) => {
   try {
     const studentId = req.params.id;
+<<<<<<< HEAD
     const student = await User.findById(studentId).select("-password").lean();
     if (!student || student.role !== "student") {
       return res.status(404).json({ msg: "Student not found in our system" });
@@ -79,6 +92,18 @@ router.get("/students/:id/progress", validateObjectId("id"), async (req, res) =>
       ModuleSession.find({ student: studentId }).sort({ createdAt: -1 }).lean(),
     ]);
 
+=======
+    const [student, quizResults, projects] = await Promise.all([
+      User.findById(studentId).select("-password").lean(),
+      QuizResult.find({ student: studentId }).sort({ createdAt: -1 }).lean(),
+      Project.find({ student: studentId }).sort({ updatedAt: -1 }).lean(),
+    ]);
+
+    if (!student || student.role !== "student") {
+      return res.status(404).json({ msg: "Student not found" });
+    }
+
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     const totalQuizzes = quizResults.length;
     const averageScore =
       totalQuizzes > 0
@@ -104,7 +129,10 @@ router.get("/students/:id/progress", validateObjectId("id"), async (req, res) =>
       quizSummary: { totalQuizzes, averageScore, topicAverages },
       recentQuizzes: quizResults.slice(0, 10),
       projects,
+<<<<<<< HEAD
       moduleSessions,
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     });
   } catch (err) {
     console.error(err.message);
@@ -158,10 +186,16 @@ router.post(
     }
 
     try {
+<<<<<<< HEAD
       const guideFilter = req.user.faculty ? { guide: req.user.faculty } : {};
       const project = await Project.findOne({ _id: req.params.id, ...guideFilter }).select("_id student").lean();
       if (!project) {
         return res.status(404).json({ msg: "Project not found or not assigned to you" });
+=======
+      const project = await Project.findById(req.params.id).select("_id student").lean();
+      if (!project) {
+        return res.status(404).json({ msg: "Project not found" });
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
       }
 
       const feedback = new Feedback({
@@ -230,12 +264,18 @@ router.post(
     }
 
     try {
+<<<<<<< HEAD
       const guideFilter = req.user.faculty ? { guide: req.user.faculty } : {};
       const guideProjects = await Project.find(guideFilter).distinct("student");
       
       const question = await Question.findOne({ _id: req.params.id, student: { $in: guideProjects } });
       if (!question) {
         return res.status(404).json({ msg: "Question not found or from a student not assigned to you" });
+=======
+      const question = await Question.findById(req.params.id);
+      if (!question) {
+        return res.status(404).json({ msg: "Question not found" });
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
       }
 
       question.answerText = req.body.answerText;
@@ -260,6 +300,7 @@ router.post(
 
 router.get("/dashboard", async (req, res) => {
   try {
+<<<<<<< HEAD
     const user = await User.findById(req.user.id).select("faculty role username");
     if (!user) {
       console.log(`[AUTH ERROR] Teacher dashboard accessed with invalid User ID: ${req.user.id}`);
@@ -281,18 +322,32 @@ router.get("/dashboard", async (req, res) => {
         Project.countDocuments(guideFilter),
         Question.countDocuments({ status: "pending", student: { $in: guideProjects } }),
         QuizResult.find({ student: { $in: guideProjects } })
+=======
+    const [studentCount, projectCount, pendingQuestions, recentQuizzes, projectsByStatus] =
+      await Promise.all([
+        User.countDocuments({ role: "student" }),
+        Project.countDocuments(),
+        Question.countDocuments({ status: "pending" }),
+        QuizResult.find()
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
           .sort({ createdAt: -1 })
           .limit(10)
           .populate("student", "username")
           .lean(),
         Project.aggregate([
+<<<<<<< HEAD
           { $match: guideFilter },
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
           { $group: { _id: "$status", count: { $sum: 1 } } },
         ]),
       ]);
 
+<<<<<<< HEAD
     console.log(`[DEBUG] Results: students=${studentCount}, projects=${projectCount}`);
 
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     res.json({
       studentCount,
       projectCount,

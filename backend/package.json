@@ -19,17 +19,24 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "express-rate-limit": "^8.3.1",
+<<<<<<< HEAD
     "express-session": "^1.19.0",
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     "express-validator": "^7.3.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.1",
     "morgan": "^1.10.1",
+<<<<<<< HEAD
     "node-cache": "^5.1.2",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "socket.io": "^4.8.3"
+=======
+    "node-cache": "^5.1.2"
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

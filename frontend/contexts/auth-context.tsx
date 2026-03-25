@@ -21,7 +21,11 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+<<<<<<< HEAD
   login: (username: string, password: string) => Promise<void>;
+=======
+  login: (email: string, password: string) => Promise<void>;
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   register: (
     username: string,
     email: string,
@@ -105,11 +109,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, pathname, router]);
 
+<<<<<<< HEAD
   const login = async (username: string, password: string) => {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
+=======
+  const login = async (email: string, password: string) => {
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     });
     if (!res.ok) {
       const data = await res.json();

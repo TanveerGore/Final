@@ -1,12 +1,17 @@
+<<<<<<< HEAD
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server: SocketIO } = require("socket.io");
+=======
+const express = require("express");
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 const mongoose = require("mongoose");
 const cors = require("cors");
 const compression = require("compression");
 const helmet = require("helmet");
 const morgan = require("morgan");
+<<<<<<< HEAD
 const session = require("express-session");
 const rateLimit = require("express-rate-limit");
 const errorHandler = require("./middleware/errorHandler");
@@ -69,6 +74,36 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Rate limiting on auth routes
+=======
+const rateLimit = require("express-rate-limit");
+const errorHandler = require("./middleware/errorHandler");
+require("dotenv").config();
+
+const app = express();
+
+// Security headers
+app.use(helmet());
+
+// Gzip compression for all responses
+app.use(compression());
+
+// Request logging (concise in production, detailed in dev)
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+
+// Body parsing with size limit to prevent payload attacks
+app.use(express.json({ limit: "1mb" }));
+
+// CORS with explicit config
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "x-auth-token"],
+  }),
+);
+
+// Rate limiting on auth routes (brute-force protection)
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
@@ -77,7 +112,11 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+<<<<<<< HEAD
 // ── DB Connection ──────────────────────────────────────────
+=======
+// DB Connection with tuned pool settings
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
@@ -87,14 +126,18 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
     });
     console.log("MongoDB Connected...");
+<<<<<<< HEAD
     await seedFaculty();
     await injectMockLiveStudents();
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   } catch (err) {
     console.error("MongoDB connection error:", err.message);
     process.exit(1);
   }
 };
 
+<<<<<<< HEAD
 const injectMockLiveStudents = async () => {
   const faculties = await Faculty.find({});
   for (const f of faculties) {
@@ -177,6 +220,36 @@ const startServer = async () => {
     console.log(`Server started on port ${PORT}`)
   );
 
+=======
+// Routes
+app.use("/api/auth", authLimiter, require("./routes/auth"));
+app.use("/api/agents", require("./routes/agents"));
+app.use("/api/student", require("./routes/student"));
+app.use("/api/teacher", require("./routes/teacher"));
+
+// Health check
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    memoryUsage: process.memoryUsage().rss,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Global error handler (must be last middleware)
+app.use(errorHandler);
+
+const PORT = 5001;
+
+const startServer = async () => {
+  await connectDB();
+  const server = app.listen(PORT, () =>
+    console.log(`Server started on port ${PORT}`),
+  );
+
+  // Graceful shutdown
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   const shutdown = (signal) => {
     console.log(`\n${signal} received. Shutting down gracefully...`);
     server.close(async () => {

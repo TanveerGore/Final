@@ -27,6 +27,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+<<<<<<< HEAD
   isMock: {
     type: Boolean,
     default: false,
@@ -36,6 +37,8 @@ const UserSchema = new mongoose.Schema({
     ref: 'Faculty',
     default: null,
   },
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 });
 
 module.exports = mongoose.model("User", UserSchema);

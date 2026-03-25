@@ -6,6 +6,7 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
 const tokenBlacklist = require("../middleware/tokenBlacklist");
+<<<<<<< HEAD
 const { passport, issueJWT } = require("../config/passport");
 
 // ── OAuth routes ───────────────────────────────────────────
@@ -34,6 +35,8 @@ router.get(
   }
 );
 
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 
 // @route   POST api/auth/register
 // @desc    Register user (signup)
@@ -73,7 +76,11 @@ router.post(
       user.password = await bcrypt.hash(password, salt);
       await user.save();
 
+<<<<<<< HEAD
       const payload = { user: { id: user.id, role: user.role, faculty: user.faculty } };
+=======
+      const payload = { user: { id: user.id, role: user.role } };
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "5d",
@@ -122,7 +129,11 @@ router.post(
         return res.status(400).json({ msg: "Invalid credentials" });
       }
 
+<<<<<<< HEAD
       const payload = { user: { id: user.id, role: user.role, faculty: user.faculty } };
+=======
+      const payload = { user: { id: user.id, role: user.role } };
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "5d",
       });

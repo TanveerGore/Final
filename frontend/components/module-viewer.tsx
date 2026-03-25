@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import { fetchBasicModules } from "@/lib/api";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+<<<<<<< HEAD
 import { useModuleTimer } from "@/hooks/useModuleTimer";
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 
 interface ModuleViewerProps {
   projectName: string;
@@ -164,11 +167,14 @@ export function ModuleViewer({ projectName, onComplete }: ModuleViewerProps) {
     }
   };
 
+<<<<<<< HEAD
   const currentModule = modules[currentStep];
   const progress = ((currentStep + 1) / modules.length) * 100;
 
   useModuleTimer(currentModule?.title || "Loading...", currentModule?.subtitle || "");
 
+=======
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   if (loading) {
     return (
       <div className="flex flex-col h-full items-center justify-center gap-6 p-8">
@@ -195,6 +201,12 @@ export function ModuleViewer({ projectName, onComplete }: ModuleViewerProps) {
     );
   }
 
+<<<<<<< HEAD
+=======
+  const currentModule = modules[currentStep];
+  const progress = ((currentStep + 1) / modules.length) * 100;
+
+>>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   return (
     <div className="flex flex-col h-full max-w-5xl mx-auto w-full">
       {/* Header */}
