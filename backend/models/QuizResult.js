@@ -35,25 +35,19 @@ const QuizResultSchema = new mongoose.Schema({
       isCorrect: Boolean,
     },
   ],
-<<<<<<< HEAD
   tabSwitchCount: {
     type: Number,
     default: 0,
     min: 0,
   },
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   createdAt: {
     type: Date,
     default: Date.now,
   },
-<<<<<<< HEAD
   isMock: {
     type: Boolean,
     default: false,
   },
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 });
 
 QuizResultSchema.index({ student: 1, createdAt: -1 });

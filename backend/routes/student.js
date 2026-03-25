@@ -8,10 +8,7 @@ const QuizResult = require("../models/QuizResult");
 const Project = require("../models/Project");
 const Feedback = require("../models/Feedback");
 const Question = require("../models/Question");
-<<<<<<< HEAD
 const ModuleSession = require("../models/ModuleSession");
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 
 router.use(auth, roleAuth("student"));
 
@@ -38,11 +35,7 @@ router.post(
     }
 
     try {
-<<<<<<< HEAD
       const { topic, score, totalQuestions, answers, tabSwitchCount } = req.body;
-=======
-      const { topic, score, totalQuestions, answers } = req.body;
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
       const percentage = Math.round((score / totalQuestions) * 100);
 
       const quizResult = new QuizResult({
@@ -52,10 +45,7 @@ router.post(
         totalQuestions,
         percentage,
         answers: answers || [],
-<<<<<<< HEAD
         tabSwitchCount: tabSwitchCount || 0,
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
       });
 
       await quizResult.save();
@@ -126,11 +116,7 @@ router.put("/project/:id", validateObjectId("id"), async (req, res) => {
       return res.status(404).json({ msg: "Project not found" });
     }
 
-<<<<<<< HEAD
     const allowedFields = ["title", "description", "topic", "status", "components", "notes", "guide"];
-=======
-    const allowedFields = ["title", "description", "topic", "status", "components", "notes"];
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         project[field] = req.body[field];
@@ -239,7 +225,6 @@ router.get("/questions", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // ── Module Sessions ────────────────────────────────────────
 
 router.post("/module-session/start", [
@@ -291,6 +276,4 @@ router.get("/module-sessions", async (req, res) => {
   }
 });
 
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 module.exports = router;
