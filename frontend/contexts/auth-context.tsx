@@ -14,6 +14,7 @@ interface User {
   username: string;
   email: string;
   role: "student" | "teacher";
+  avatar?: string;
 }
 
 interface AuthContextType {
@@ -21,11 +22,7 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-<<<<<<< HEAD
   login: (username: string, password: string) => Promise<void>;
-=======
-  login: (email: string, password: string) => Promise<void>;
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   register: (
     username: string,
     email: string,
@@ -37,6 +34,7 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
+  updateProfile: (username: string, avatar?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -109,19 +107,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, pathname, router]);
 
-<<<<<<< HEAD
   const login = async (username: string, password: string) => {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
-=======
-  const login = async (email: string, password: string) => {
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
     });
     if (!res.ok) {
       const data = await res.json();
@@ -206,6 +196,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (username: string, avatar?: string) => {
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/auth/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": token,
+      },
+      body: JSON.stringify({ username, avatar }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || data.errors?.[0]?.msg || "Failed to update profile");
+    }
+    const updatedUser = await res.json();
+    setUser(updatedUser); // Update the user state globally immediately!
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -217,6 +225,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         changePassword,
+        updateProfile,
       }}
     >
       {children}

@@ -1,10 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
 import { useState, useCallback, useEffect, useRef } from "react";
-=======
-import { useState, useCallback } from "react";
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,11 +16,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { submitQuizResult } from "@/lib/api";
-<<<<<<< HEAD
+import { submitQuizResult, submitProctoringIncident } from "@/lib/api";
 import { useTabGuard } from "@/hooks/useTabGuard";
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
 
 interface QuizQuestion {
   question: string;
@@ -95,22 +88,48 @@ export function QuizGate({
   const [quizComplete, setQuizComplete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const [hasStarted, setHasStarted] = useState(false);
+
   const currentQuestion = allQuestions[currentIndex];
   const progress = ((currentIndex + 1) / allQuestions.length) * 100;
-<<<<<<< HEAD
   
-  const { switchCount } = useTabGuard(!quizComplete && allQuestions.length > 0);
+  const { switchCount, lastViolationType } = useTabGuard(!quizComplete && hasStarted && allQuestions.length > 0);
   const [showCheatWarning, setShowCheatWarning] = useState(false);
+  const [isHardLocked, setIsHardLocked] = useState(false);
   const prevSwitchCount = useRef(switchCount);
 
   useEffect(() => {
     if (switchCount > prevSwitchCount.current) {
-      setShowCheatWarning(true);
+      const severity = switchCount >= 3 ? "critical" : switchCount === 2 ? "final_warning" : "warning";
+      
+      submitProctoringIncident({
+        quizTopic: topic,
+        type: lastViolationType || "tab_switch",
+        severity,
+        metadata: { currentCount: switchCount }
+      }).catch(console.error);
+
+      if (switchCount >= 3) {
+        setIsHardLocked(true);
+        setQuizComplete(true);
+      } else {
+        setShowCheatWarning(true);
+      }
       prevSwitchCount.current = switchCount;
     }
-  }, [switchCount]);
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
+  }, [switchCount, lastViolationType, topic]);
+
+  const handleStart = async () => {
+    try {
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      }
+      setHasStarted(true);
+    } catch (e) {
+      console.error("Failed to enter fullscreen", e);
+      alert("Please allow fullscreen to start the quiz.");
+    }
+  };
 
   const handleSelect = (option: string) => {
     if (isAnswered) return;
@@ -151,10 +170,7 @@ export function QuizGate({
           score,
           totalQuestions,
           percentage,
-<<<<<<< HEAD
           tabSwitchCount: switchCount,
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
           answers: finalAnswers,
         });
       } catch (e) {
@@ -195,7 +211,80 @@ export function QuizGate({
     );
   }
 
-<<<<<<< HEAD
+  if (!hasStarted && !quizComplete && !isHardLocked) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-6 text-center space-y-6">
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           className="max-w-md w-full space-y-6 bg-background border rounded-2xl p-8 shadow-2xl"
+        >
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Trophy className="h-8 w-8 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight mb-2">Ready to begin?</h2>
+            <p className="text-muted-foreground mb-4">
+              This module requires strict focus. You must remain in Full Screen mode for the duration of the test.
+            </p>
+            <div className="text-sm border border-red-500/20 bg-red-500/5 text-red-500/90 rounded-lg p-3 text-left">
+              <span className="font-semibold block mb-1">Anti-Cheat Enabled:</span>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Do not exit Full Screen</li>
+                <li>Do not attempt to change tabs</li>
+                <li>Keyboard shortcuts disabled</li>
+              </ul>
+            </div>
+          </div>
+          <Button size="lg" className="w-full gap-2 text-lg h-12" onClick={handleStart}>
+            Accept & Start Quiz <ChevronRight className="h-5 w-5" />
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (isHardLocked) {
+    return (
+      <div className="h-full flex items-center justify-center p-6 relative">
+        <div className="absolute inset-0 bg-red-950/20 backdrop-blur-md z-0"></div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="max-w-md w-full relative z-10"
+        >
+          <Card className="border-red-500 bg-background/95 shadow-2xl shadow-red-500/40 overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-2 bg-red-600" />
+            <div className="p-8 text-center space-y-6">
+              <div className="mx-auto w-20 h-20 rounded-full bg-red-500/20 flex flex-col items-center justify-center">
+                <XCircle className="h-10 w-10 text-red-500" />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold tracking-tight text-red-500">
+                  Quiz Terminated
+                </h2>
+                <div className="space-y-2 p-4 bg-red-500/10 rounded-lg border border-red-500/20 text-left">
+                  <p className="text-sm font-medium text-red-400">Violation: Excessive Policy Breaches</p>
+                  <p className="text-sm text-red-300">
+                    You have repeatedly violated the proctoring rules (switched tabs, escaped full screen, or used forbidden tools).
+                    This module has been forcefully locked, and a critical incident report has been submitted to your faculty guide.
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="w-full font-semibold border-red-500/30 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                onClick={() => window.location.href = "/"}
+              >
+                Return to Dashboard
+              </Button>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (showCheatWarning) {
     return (
       <div className="h-full flex items-center justify-center p-6 relative">
@@ -213,18 +302,24 @@ export function QuizGate({
               </div>
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold tracking-tight text-red-500">
-                  Warning: Focus Lost
+                  Warning: Action Blocked
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  You have switched tabs or lost focus on the quiz window. This incident has been recorded to your instructor.
-                  Frequent tab switching is a violation of the anti-cheat protocol and may result in a failing grade.
+                  You triggered an anti-cheat protocol ({lastViolationType || "lost focus"}). This incident has been recorded to your instructor. 
+                  <br/><br/>
+                  <strong className="text-red-400">You have {3 - switchCount} warnings left before the exam is terminated.</strong>
                 </p>
               </div>
               <Button
                 variant="destructive"
                 className="w-full gap-2 font-semibold"
                 size="lg"
-                onClick={() => setShowCheatWarning(false)}
+                onClick={async () => {
+                  setShowCheatWarning(false);
+                  if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen().catch(() => {});
+                  }
+                }}
               >
                 I Understand, Return to Quiz
               </Button>
@@ -235,8 +330,6 @@ export function QuizGate({
     );
   }
 
-=======
->>>>>>> 03ef4f7e5e1a0fc91a38965b199ee23522ef5efb
   // Results screen
   if (quizComplete) {
     return (
