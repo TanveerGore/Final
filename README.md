@@ -1,6 +1,6 @@
-# EmbedAI Learn - Smart Embedded Systems Platform 🤖🔌
+# Electronics.LLM - Smart Embedded Systems Platform 🤖🔌
 
-**EmbedAI Learn** is an advanced, AI-powered educational platform designed to guide students and hobbyists through the creation of embedded systems projects (Arduino, ESP32, etc.). From idea generation to wiring to code compilation, the platform serves as an end-to-end intelligent tutor.
+**Electronics.LLM** is an advanced, AI-powered educational platform designed to guide students and hobbyists through the creation of embedded systems projects (Arduino, ESP32, etc.). From idea generation to wiring to code compilation, the platform serves as an end-to-end intelligent tutor.
 
 ---
 
